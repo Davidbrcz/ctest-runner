@@ -56,8 +56,10 @@
          (out-buffer (ctest-runner--fresh-buffer out-buffer-name)))
     ;; use apply to be able to give arguments (a list) where
     ;; a direct call to call-process expects individual elements
-    (apply #'call-process binary nil out-buffer nil arguments)
+	(let* ((default-directory (projectile-compilation-dir)))
+      (call-process "ctest" nil out-buffer nil "-R" test-name "--output-on-failure"))
     (with-current-buffer out-buffer
+	  (display-ansi-colors)
       (compilation-mode))
     (when (buffer-live-p out-buffer)
       (pop-to-buffer out-buffer))
@@ -106,3 +108,6 @@
     (let ((buf (ctest-runner--fresh-buffer bufname)))
       (pop-to-buffer buf)
       (treemacs-initialize showcase-tests-files-variadic))))
+
+
+
